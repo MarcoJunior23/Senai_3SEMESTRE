@@ -1,12 +1,11 @@
 
-export Class Device = {
+export class Device {
     nome: string = "";
     state: boolean = false;
-    color: String = "827d85";
-    
+    color: string = "#4a3670";
 }
 
-export type Places = {
+export class Places {
     nome: string = "";
     devices: Array<Device> = []
 }
