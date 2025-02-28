@@ -2,8 +2,8 @@
 
 </script>
 
-<template>
-    <h1>Management Page!</h1>
+<template >
+    <h1>Management page</h1>
 </template>
 
 <style scoped lang="scss">
