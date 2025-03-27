@@ -38,7 +38,7 @@ class Compressor extends MaquinaIndustrial {
 void main() {
   // Criando uma instância da classe Compressor
   var compressor = Compressor('Compressor 3000', 1500.0);
-  
+
   // Ligando a máquina
   compressor.ligar();
   
