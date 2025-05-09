@@ -5,10 +5,11 @@
 const char* ssid = "Wokwi-GUEST";
 const char* password = "";
 
-const char* contentfulURL = "";
-const char* accessToken = "Bearer ";
+const char* contentfulURL = "https://cdn.contentful.com/spaces/9emcot1k760p/environments/master/entries?content_type=device&select=fields.pin,fields.state";
+const char* accessToken = "Bearer wm8wcDePYAfU6Ub5zOIj6DQlsq4SYyfBtuS1Cxl5Iyk";
 
 unsigned long timerScan = 0;
+#define SCAN_DELAY 3000
 
 void setup()
 {
@@ -20,22 +21,21 @@ void setup()
         delay(100);
         Serial.println("*");
     }
-    Serial.printf("Sucessfully Connected! with: %s", ssid);
-    Serial.println(ssid);
+    Serial.printf("\n Successfully Connected with: %s", ssid);    
 }
-
 
 void loop()
 {
-    if ((millis() - timerScan) >= SCAN_DELAY) {
-        Serial.println("\n **** SCAN START **** \n");
+    if( (millis() - timerScan) >= SCAN_DELAY ){
+        Serial.println("\n **** SCAN STARTED *** \n");
         timerScan = millis();
         scanRoutine();
-        Serial.println("\n **** SCAN END **** \n");
-    }
+        Serial.println("\n **** SCAN ENDED *** \n");
+    }    
 }
 
 void scanRoutine(){
+
     HTTPClient http;
     http.begin(contentfulURL);
     http.addHeader("Authorization", accessToken);
@@ -43,35 +43,28 @@ void scanRoutine(){
     int httpResponseStatus = http.GET();
 
     if(httpResponseStatus > 0){
-        String response = http.getString(); //resposta do backend
+        String response = http.getString();
 
-        const int responseSize = response.length() * 1.1;
+        const int responseSize = response.length() * 1.1;        
         DynamicJsonDocument json(responseSize);
-        deserializeJson(json, response);
+        deserializeJson(json,response);
 
         JsonArray items = json["items"];
 
-        for(JsonObject item : items){ //int i=0; i<sizeof(items);i++
+        for( JsonObject item : items ){
             int pin = item["fields"]["pin"] | -1;
             bool state = item["fields"]["state"] | false;
 
-            if (pin>=0){
+            if(pin > 0 ){
                 pinMode(pin, OUTPUT);
                 digitalWrite(pin, state);
-                Serial.printf("PIN: %d, STATE: %s \n", pin, state ? "ON":"OFF");
+                Serial.printf("\n PIN: %d, STATE: %s", pin, state? "ON":"OFF");                
             }
         }
+
     }
     else{
-        Serial.printf("Error when calling backend: %d \n",httpResponseStatus);
+        Serial.printf("\n Error when calling backend: %d \n",httpResponseStatus);
     }
-    http.end();
+
 }
-
-//interrupts //micro controlador com 2 pinos
-//threads //Orientação do processador, para processar 2 coisas ao mesmo tempo
-//virtual // mais dinamica para usar
-
-unsigned long timerScan = 0;
-#define SCAN_DELAY 3000
-
