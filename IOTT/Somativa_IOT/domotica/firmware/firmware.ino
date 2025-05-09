@@ -5,36 +5,36 @@
 const char* ssid = "Wokwi-GUEST";
 const char* password = "";
 
-const char* contentfulURL = "https://cdn.contentful.com/spaces/5g095b2j4szw/environments/master/entries?content_type=device&select=fields.pin,fields.state";
-const char* accessToken = "Bearer tgvAVXWybtVMePRKCLWcmDb-ux_ikZPDkuQiUH8zq8I";
-
-//interrupts //micro controlador com 2 pinos
-//threads //Orientação do processador, para processar 2 coisas ao mesmo tempo
-//virtual // mais dinamica para usar
+const char* contentfulURL = "";
+const char* accessToken = "Bearer ";
 
 unsigned long timerScan = 0;
-#define SCAN_DELAY 3000
 
 void setup()
 {
     Serial.begin(115200);
     WiFi.begin(ssid,password);
-    Serial.println("Starting Wifi Connection...");
+    Serial.println("Starting Wifi Connection!");
+
     while(WiFi.status() != WL_CONNECTED){
         delay(100);
-        Serial.print("*");
+        Serial.println("*");
     }
-    Serial.println("Sucessfully Connected! with: ");
+    Serial.printf("Sucessfully Connected! with: %s", ssid);
     Serial.println(ssid);
 }
+
+
 void loop()
 {
-    if ((millis() - timerScan) >= SCAN_DELAY)
-     Serial.println("\n **** SCAN START **** \n");
-     scanRoutine();
-     timerScan = millis();
-     Serial.println("\n **** SCAN END **** \n");
+    if ((millis() - timerScan) >= SCAN_DELAY) {
+        Serial.println("\n **** SCAN START **** \n");
+        timerScan = millis();
+        scanRoutine();
+        Serial.println("\n **** SCAN END **** \n");
+    }
 }
+
 void scanRoutine(){
     HTTPClient http;
     http.begin(contentfulURL);
@@ -67,4 +67,11 @@ void scanRoutine(){
     }
     http.end();
 }
+
+//interrupts //micro controlador com 2 pinos
+//threads //Orientação do processador, para processar 2 coisas ao mesmo tempo
+//virtual // mais dinamica para usar
+
+unsigned long timerScan = 0;
+#define SCAN_DELAY 3000
 
